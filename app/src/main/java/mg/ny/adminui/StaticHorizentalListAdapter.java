@@ -42,18 +42,13 @@ public class StaticHorizentalListAdapter extends RecyclerView.Adapter<StaticHori
 
             }
         });
-
         if(row_index == position) {
-
             holder.text.setBackgroundResource(R.drawable.horizental_selected_list_bg);
-
             holder.text.setTextColor(holder.text.getResources().getColor(R.color.white));
-
         }
         else{
             holder.text.setBackgroundResource(R.drawable.horizental_list_bg);
             holder.text.setTextColor(holder.text.getResources().getColor(R.color.dark_grey));
-
         }
     }
 

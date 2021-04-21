@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Use the {@link PlaneFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlaneFragment extends Fragment {
+public class  PlaneFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,10 +86,8 @@ public class PlaneFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_plane, container, false);
         recyclerView = view.findViewById(R.id.rv_plane);
         horizentalListAdapter = new StaticHorizentalListAdapter(item);
-
         recyclerView.setLayoutManager(new LinearLayoutManager( view.getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(horizentalListAdapter);
-
         return view;
     }
 }
