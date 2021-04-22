@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -69,6 +70,9 @@ public class  PlaneFragment extends Fragment {
         super.onAttach(activity);
         this.context = activity;
     }
+
+
+
     private RecyclerView recyclerView;
     private StaticHorizentalListAdapter horizentalListAdapter;
     @Override
@@ -82,12 +86,34 @@ public class  PlaneFragment extends Fragment {
         item.add(new StaticHorizentalListModel("AIR265-85"));
         item.add(new StaticHorizentalListModel("AIR234-78"));
         item.add(new StaticHorizentalListModel("Jet Privée xoxo"));
+        ArrayList<PlaneDataModel> data = new ArrayList<>();
+        data.add(new PlaneDataModel("AV-0001", "Jet Privée", "56"));
+        data.add(new PlaneDataModel("AV-0002", "AIR261-45", "23"));
+        data.add(new PlaneDataModel("AV-0003", "Bus2", "14"));
+        data.add(new PlaneDataModel("AV-0004", "AIR265-85", "67"));
+        data.add(new PlaneDataModel("AV-0005", "AIR234-78", "45"));
+        data.add(new PlaneDataModel("AV-0006", "Jet Privée xoxo", "23"));
 
         View view = inflater.inflate(R.layout.fragment_plane, container, false);
         recyclerView = view.findViewById(R.id.rv_plane);
-        horizentalListAdapter = new StaticHorizentalListAdapter(item);
+        HorizentalListCallBack<StaticHorizentalListAdapter.StaticHorizentalListViewHolder, Integer, Integer> callbackHorizentalList = (StaticHorizentalListAdapter.StaticHorizentalListViewHolder holder, Integer position) -> {
+            PlaneDataModel currentPlaneData = data.get(position);
+            TextView id = view.findViewById(R.id.planeId);
+            TextView name = view.findViewById(R.id.planeName);
+            TextView placeCount = view.findViewById(R.id.planePlaceCount);
+            id.setText(currentPlaneData.getId());
+            name.setText(currentPlaneData.getName());
+            placeCount.setText(currentPlaneData.getPlaceCount());
+            return 0;
+        };
+        horizentalListAdapter = new StaticHorizentalListAdapter(item, callbackHorizentalList);
         recyclerView.setLayoutManager(new LinearLayoutManager( view.getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(horizentalListAdapter);
+        TextView planeNumber = view.findViewById(R.id.planeNumber);
+        planeNumber.setText(String.valueOf(data.size()));
         return view;
     }
+
+
+
 }

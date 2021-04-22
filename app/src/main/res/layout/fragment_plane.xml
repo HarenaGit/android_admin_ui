@@ -25,13 +25,13 @@
             android:layout_centerVertical="true"
             >
             <TextView
-                android:id="@+id/numberPlane"
+                android:id="@+id/planeNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:fontFamily="@font/arial"
                 android:textSize="9dp"
-                android:text="130+"
+                android:text="0"
                 android:layout_centerInParent="true"
                 />
         </RelativeLayout>
@@ -169,10 +169,11 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="AV-0001"
+                                        android:text=""
+                                        android:id="@+id/planeId"
                                         android:textColor="@color/dark_grey"
                                         android:textSize="11dp"
-                                        android:fontFamily="@font/arial"
+                                        android:fontFamily="@font/opensans_semibold"
                                         android:layout_alignParentRight="true"
                                         />
                                 </LinearLayout>
@@ -233,7 +234,8 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="jet privée"
+                                            android:text=""
+                                            android:id="@+id/planeName"
                                             android:textColor="@color/dark_grey"
                                             android:textSize="11dp"
                                             android:fontFamily="@font/opensans_semibold"
@@ -297,10 +299,11 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="56"
+                                            android:text=""
+                                            android:id="@+id/planePlaceCount"
                                             android:textColor="@color/dark_grey"
                                             android:textSize="11dp"
-                                            android:fontFamily="@font/arial"
+                                            android:fontFamily="@font/opensans_semibold"
                                             android:layout_alignParentRight="true"
                                             />
                                     </LinearLayout>
