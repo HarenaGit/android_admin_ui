@@ -17,9 +17,10 @@ import java.util.ArrayList;
 public class StaticHorizentalListAdapter extends RecyclerView.Adapter<StaticHorizentalListAdapter.StaticHorizentalListViewHolder> {
 
     private ArrayList<StaticHorizentalListModel> items;
-    private HorizentalListCallBack<StaticHorizentalListViewHolder, Integer, Integer> onClickCallback;
+    private HorizentalListCallBack<StaticHorizentalListViewHolder, Integer, Boolean, Integer> onClickCallback;
     int row_index = -1;
-    public StaticHorizentalListAdapter(ArrayList<StaticHorizentalListModel> items, HorizentalListCallBack<StaticHorizentalListViewHolder, Integer, Integer> onClickCallback){
+    Boolean isFirstClicked = true;
+    public StaticHorizentalListAdapter(ArrayList<StaticHorizentalListModel> items, HorizentalListCallBack<StaticHorizentalListViewHolder, Integer, Boolean, Integer> onClickCallback){
         this.items = items;
         this.onClickCallback = onClickCallback;
     }
@@ -42,7 +43,8 @@ public class StaticHorizentalListAdapter extends RecyclerView.Adapter<StaticHori
             public void onClick(View v) {
                 row_index = position;
                 notifyDataSetChanged();
-                onClickCallback.apply(holder, position);
+                onClickCallback.apply(holder, position, isFirstClicked);
+                isFirstClicked = false;
             }
         });
         if(row_index == position) {
