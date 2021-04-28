@@ -66,6 +66,13 @@ public class  PlaneFragment extends Fragment {
                 RelativeLayout planeFragement = view.findViewById(R.id.planeFragement);
 
                 View planePage = inflater.inflate(R.layout.plane_page, container, false);
+                planePage.findViewById(R.id.addPlaneButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent addActivity = new Intent(context, AddplaneActivity.class);
+                        startActivity(addActivity);
+                    }
+                });
                 planeFragement.addView(planePage);
                 RelativeLayout planeList = view.findViewById(R.id.planeHList);
                 View planeHorizentalList = inflater.inflate(R.layout.plane_horizental_list, container, false);

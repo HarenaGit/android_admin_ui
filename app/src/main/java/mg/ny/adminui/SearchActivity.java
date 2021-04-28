@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -88,7 +89,10 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
-                        // open
+                        Intent editActivity = new Intent(getApplicationContext(), EditplaneActivity.class);
+                        PlaneDataModel currentPlaneData = data.get(position);
+                        editActivity.putExtra("data", currentPlaneData);
+                        startActivity(editActivity);
                         break;
                     case 1:
                         // delete

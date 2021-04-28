@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AdminUI">
-        <activity android:name=".EditplaneActivity"></activity>
+        <activity android:name=".AddplaneActivity"></activity>
+        <activity android:name=".EditplaneActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".CookieActivity" />
         <activity android:name=".MainActivity">
