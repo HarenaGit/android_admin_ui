@@ -48,7 +48,7 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/searchListItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -58,6 +58,6 @@
         android:layout_marginRight="20dp"
         >
 
-    </ListView>
+    </com.baoyz.swipemenulistview.SwipeMenuListView>
 
 </LinearLayout>
