@@ -60,6 +60,7 @@
                     android:elevation="0dp"
                     android:src="@drawable/ic_search"
                     android:tint="@color/blue"
+                    android:visibility="gone"
                     />
                 <ImageButton
                     android:layout_width="50dp"

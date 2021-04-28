@@ -21,4 +21,9 @@
 
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.SearchView" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:editTextBackground">@android:color/transparent</item>
+        <item name="android:editTextColor">@color/dark_grey</item>
+        <item name="android:textSize">13dp</item>
+    </style>
 </resources>

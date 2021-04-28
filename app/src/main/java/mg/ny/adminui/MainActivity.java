@@ -34,10 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private ChipNavigationBar bottomMenu;
     private FragmentManager  fragmentManager;
     private TextView activityTitle;
-    private RecyclerView recyclerView;
-    private StaticHorizentalListAdapter horizentalListAdapter;
     private Fragment fragment;
     private ProgressBar progressBar;
+    private ImageButton searchButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         this.progressBar = findViewById(R.id.spin_kit);
         this.activityTitle = findViewById(R.id.activity_title);
         this.bottomMenu = findViewById(R.id.bottom_menu);
+        this.searchButton = findViewById(R.id.searchButton);
         if(savedInstanceState == null){
             this.bottomMenu.setItemSelected(R.id.Dashboard, true);
             fragmentManager = getSupportFragmentManager();
@@ -60,17 +60,17 @@ public class MainActivity extends AppCompatActivity {
                 changeCurrentBottomMenuItemSelected(id);
             }
         });
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchActivity = new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(searchActivity);
+            }
+        });
 
     }
 
-    public void waiting(int ms){
-        try {
-            Thread.sleep(ms);
 
-        }catch (InterruptedException e){
-            Thread.currentThread().interrupt();
-        }
-    }
     private void changeCurrentBottomMenuItemSelected(int id){
 
         progressBar.setVisibility(View.VISIBLE);
@@ -79,23 +79,27 @@ public class MainActivity extends AppCompatActivity {
             case R.id.Dashboard:
                 fragment = new DashboardFragment();
                 this.activityTitle.setText("Tableau de bord");
+                this.searchButton.setVisibility(View.GONE);
                 break;
             case R.id.Plane:
                 fragment = new PlaneFragment();
                 this.activityTitle.setText("Avion");
-
+                this.searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.Flight:
                 fragment = new FlightFragment();
                 this.activityTitle.setText("Vol");
+                this.searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.Reservation:
                 fragment = new ReservationFragment();
                 this.activityTitle.setText("Reservation");
+                this.searchButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.Visualization:
                 fragment = new VisualisationFragment();
                 this.activityTitle.setText("Visualisation");
+                this.searchButton.setVisibility(View.VISIBLE);
                 break;
         }
         
