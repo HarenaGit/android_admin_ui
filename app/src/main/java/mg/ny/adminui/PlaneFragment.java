@@ -9,15 +9,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class  PlaneFragment extends Fragment {
@@ -70,7 +68,7 @@ public class  PlaneFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Intent addActivity = new Intent(context, AddplaneActivity.class);
-                        startActivity(addActivity);
+                        startActivityForResult(addActivity, RequestCode.REQUEST_CODE_ADD_PLANE);
                     }
                 });
                 planeFragement.addView(planePage);
@@ -86,7 +84,7 @@ public class  PlaneFragment extends Fragment {
                     public void onClick(View v) {
                        Intent editActivity = new Intent(context, EditplaneActivity.class);
                        editActivity.putExtra("data", currentPlaneData);
-                       startActivity(editActivity);
+                       startActivityForResult(editActivity, RequestCode.REQUEST_CODE_EDIT_PLANE);
                     }
                 });
                 recyclerView = view.findViewById(R.id.rv_plane);
@@ -116,6 +114,24 @@ public class  PlaneFragment extends Fragment {
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case RequestCode.REQUEST_CODE_ADD_PLANE:
+                Toast.makeText(context, "add new plane data", 2000).show();
+                break;
+            case RequestCode.REQUEST_CODE_EDIT_PLANE:
+                Toast.makeText(context, "edited plane data", 2000).show();
+                break;
+            case RequestCode.REQUEST_CODE_REMOVE_PLANE:
+                Toast.makeText(context, "remove plane data", 2000).show();
+                break;
+            default:
 
+        }
+
+    }
 
 }

@@ -3,12 +3,15 @@ package mg.ny.adminui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import com.google.android.material.button.MaterialButton;
 
 public class EditplaneActivity extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class EditplaneActivity extends AppCompatActivity {
     private EditText id;
     private EditText name;
     private EditText placeCount;
+    private MaterialButton save;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,16 @@ public class EditplaneActivity extends AppCompatActivity {
             public void onClick(View v) {
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 onBackPressed();
+            }
+        });
+        save = findViewById(R.id.saveEditPlane);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                Intent intent = new Intent();
+                setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
+                finish();
             }
         });
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);

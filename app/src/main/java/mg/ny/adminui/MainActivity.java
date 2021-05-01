@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
+
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private ChipNavigationBar bottomMenu;
@@ -68,15 +70,13 @@ public class MainActivity extends AppCompatActivity {
                 if(activityTitle.getText().equals("Avion")){
                     Intent searchActivity = new Intent(getApplicationContext(), SearchActivity.class);
                     searchActivity.putParcelableArrayListExtra("data", planeData);
-                    startActivity(searchActivity);
+                    startActivityForResult(searchActivity, RequestCode.REQUEST_CODE_EDIT_PLANE);
                 }
 
             }
         });
 
     }
-
-
     private void changeCurrentBottomMenuItemSelected(final int id){
         this.searchButton.setVisibility(View.GONE);
         final ImageButton searchBtn = this.searchButton;
@@ -136,6 +136,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, 2000);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        fragment.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     private ArrayList<PlaneDataModel>  planeData(){
 

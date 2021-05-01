@@ -3,6 +3,7 @@ package mg.ny.adminui;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -34,16 +35,19 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<PlaneDataModel> data;
     private PlaneListAdapter adapter;
     private SwipeMenuListView listView;
+    private InputMethodManager imm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        listView = findViewById(R.id.searchListItem);
+        listView.setVisibility(View.GONE);
         searchView = findViewById(R.id.searchItem);
         int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView searchText = (TextView) searchView.findViewById(id); backButton = findViewById(R.id.backButton);
         Typeface ft = ResourcesCompat.getFont(this, R.font.segeo_ui);
         searchText.setTypeface(ft);
-        InputMethodManager imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
+         imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,7 +56,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        listView = findViewById(R.id.searchListItem);
+
 
         data = getIntent().getParcelableArrayListExtra("data");
 
@@ -92,10 +96,13 @@ public class SearchActivity extends AppCompatActivity {
                         Intent editActivity = new Intent(getApplicationContext(), EditplaneActivity.class);
                         PlaneDataModel currentPlaneData = data.get(position);
                         editActivity.putExtra("data", currentPlaneData);
-                        startActivity(editActivity);
+                        startActivityForResult(editActivity, RequestCode.REQUEST_CODE_EDIT_PLANE);
                         break;
                     case 1:
-                        // delete
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        Intent intent = new Intent();
+                        setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
+                        finish();
                         break;
                 }
                 // false : close the menu; true : not close the menu
@@ -112,11 +119,25 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if(!newText.equals("")) listView.setVisibility(View.VISIBLE);
+                else listView.setVisibility(View.GONE);
                 adapter.getFilter().filter(newText);
                 return false;
             }
         });
 
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RequestCode.REQUEST_CODE_EDIT_PLANE)
+        {
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            Intent intent = new Intent();
+            setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
+            finish();
+        }
     }
 }
