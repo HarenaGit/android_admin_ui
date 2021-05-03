@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager  fragmentManager;
     private TextView activityTitle;
     private Fragment fragment;
+    private Fragment planeFragment;
     private ProgressBar progressBar;
     private ImageButton searchButton;
     private ArrayList<PlaneDataModel> planeData;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 if(activityTitle.getText().equals("Avion")){
                     Intent searchActivity = new Intent(getApplicationContext(), SearchActivity.class);
                     searchActivity.putParcelableArrayListExtra("data", planeData);
-                    startActivityForResult(searchActivity, RequestCode.REQUEST_CODE_EDIT_PLANE);
+                    startActivityForResult(searchActivity, RequestCode.REQUEST_CODE_SEARCH_PLANE);
                 }
 
             }
@@ -92,7 +94,12 @@ public class MainActivity extends AppCompatActivity {
                     planeData = planeData();
                     planeItem = planeItem();
                 }
-                fragment = new PlaneFragment(planeItem, planeData);
+                RemoveItemCallBack removeItemCallBack = (int p) -> {
+                   planeData.remove(p);
+                   planeItem.remove(p);
+                   Log.d("test", "ca devrait marcher alors");
+                };
+                fragment = new PlaneFragment(planeItem, planeData, removeItemCallBack);
                 this.activityTitle.setText("Avion");
                 break;
             case R.id.Flight:
@@ -139,12 +146,49 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("test", "result code : " + resultCode);
+        if(resultCode == Activity.RESULT_CANCELED) return;
+        switch (resultCode){
+            case RequestCode.REQUEST_CODE_ADD_PLANE:
+                PlaneDataModel currentPlaneData = (PlaneDataModel) data.getParcelableExtra("data");
+                addPlaneData(currentPlaneData);
+                addPlaneItem(currentPlaneData.getName());
+
+                break;
+            case RequestCode.REQUEST_CODE_EDIT_PLANE:
+                PlaneDataModel currentData = (PlaneDataModel) data.getParcelableExtra("data");
+                int currentPosition = getPlaneDataPosition(currentData.getId());
+                if(currentPosition>=0){
+                    setPlaneData(currentPosition, currentData);
+                    setPlaneItem(currentPosition, new StaticHorizentalListModel(currentData.getName()));
+                }
+                break;
+            default:
+        }
+
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         fragment.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
+    private void addPlaneData(PlaneDataModel o){
+        planeData.add(0, o);
+    }
+    private void addPlaneItem(String text){
+        planeItem.add(0, new StaticHorizentalListModel(text));
+    }
+    private void setPlaneData(int position, PlaneDataModel o){
+        planeData.set(position, o);
+    }
+    private void setPlaneItem(int position, StaticHorizentalListModel o){
+        planeItem.set(position, o);
+    }
+    private int getPlaneDataPosition(String id){
+        for(int i=0; i<planeData.size();i++){
+            if(planeData.get(i).getId().equals(id)) return i;
+        }
+        return -1;
+    }
     private ArrayList<PlaneDataModel>  planeData(){
 
         ArrayList<PlaneDataModel> data = new ArrayList<>();
@@ -154,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         data.add(new PlaneDataModel("AV-0004", "AIR265-85", "67"));
         data.add(new PlaneDataModel("AV-0005", "AIR234-78", "45"));
         data.add(new PlaneDataModel("AV-0006", "Jet Privée xoxo", "23"));
+
         return data;
     }
     private ArrayList<StaticHorizentalListModel> planeItem(){
@@ -164,6 +209,9 @@ public class MainActivity extends AppCompatActivity {
         item.add(new StaticHorizentalListModel("AIR265-85"));
         item.add(new StaticHorizentalListModel("AIR234-78"));
         item.add(new StaticHorizentalListModel("Jet Privée xoxo"));
+
+
+
         return item;
     }
 

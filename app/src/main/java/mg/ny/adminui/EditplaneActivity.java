@@ -2,6 +2,7 @@ package mg.ny.adminui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,7 +48,9 @@ public class EditplaneActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                onBackPressed();
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_CANCELED, intent);
+                finish();
             }
         });
         save = findViewById(R.id.saveEditPlane);
@@ -56,6 +59,7 @@ public class EditplaneActivity extends AppCompatActivity {
             public void onClick(View v) {
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 Intent intent = new Intent();
+                intent.putExtra("data", new PlaneDataModel(id.getText().toString(), name.getText().toString(), placeCount.getText().toString()));
                 setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
                 finish();
             }

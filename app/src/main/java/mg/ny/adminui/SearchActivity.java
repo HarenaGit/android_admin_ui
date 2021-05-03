@@ -5,6 +5,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,8 +15,10 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -23,6 +28,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.google.android.material.button.MaterialButton;
 
 import org.w3c.dom.Text;
 
@@ -36,6 +42,7 @@ public class SearchActivity extends AppCompatActivity {
     private PlaneListAdapter adapter;
     private SwipeMenuListView listView;
     private InputMethodManager imm;
+    private int p;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +59,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                onBackPressed();
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_CANCELED, intent);
+                finish();
             }
         });
 
@@ -87,10 +96,34 @@ public class SearchActivity extends AppCompatActivity {
         };
 
         listView.setMenuCreator(creator);
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.remove_dialog);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        Button yes =  dialog.findViewById(R.id.acceptRemove);
+        Button no = dialog.findViewById(R.id.declineRemove);
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                PlaneDataModel currentPlaneData = data.get(p);
+                intent.putExtra("data", currentPlaneData);
+                setResult(RequestCode.REQUEST_CODE_REMOVE_PLANE, intent);
+                finish();
+            }
+        });
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                position = p;
                 switch (index) {
                     case 0:
                         Intent editActivity = new Intent(getApplicationContext(), EditplaneActivity.class);
@@ -100,9 +133,9 @@ public class SearchActivity extends AppCompatActivity {
                         break;
                     case 1:
                         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                        Intent intent = new Intent();
-                        setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
-                        finish();
+                        TextView textDialog = dialog.findViewById(R.id.planeRemoveId);
+                        textDialog.setText("Avion numéro : " +  data.get(position).getId());
+                        dialog.show();
                         break;
                 }
                 // false : close the menu; true : not close the menu
@@ -132,10 +165,19 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RequestCode.REQUEST_CODE_EDIT_PLANE)
+        if(resultCode == Activity.RESULT_CANCELED){
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            Intent intent = new Intent();
+            setResult(Activity.RESULT_CANCELED, intent);
+            finish();
+            return;
+        }
+        if(resultCode == RequestCode.REQUEST_CODE_EDIT_PLANE)
         {
             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             Intent intent = new Intent();
+            PlaneDataModel currentData = (PlaneDataModel) data.getParcelableExtra("data");
+            intent.putExtra("data", currentData);
             setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
             finish();
         }

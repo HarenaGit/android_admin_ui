@@ -12,7 +12,6 @@
         <activity android:name=".AddplaneActivity"></activity>
         <activity android:name=".EditplaneActivity" />
         <activity android:name=".SearchActivity" />
-        <activity android:name=".CookieActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

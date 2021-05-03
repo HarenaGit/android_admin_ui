@@ -1,6 +1,7 @@
 package mg.ny.adminui;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +19,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
+import java.util.UUID;
+
+import mg.ny.adminui.HorizentalListInterface.LoadMore;
 
 public class  PlaneFragment extends Fragment {
 
    private ArrayList<StaticHorizentalListModel> item ;
    private ArrayList<PlaneDataModel> data;
-    public PlaneFragment(ArrayList<StaticHorizentalListModel> item, ArrayList<PlaneDataModel> data){
+   private Integer currentPosition = null;
+   private TextView currentId;
+   private TextView currentName;
+   private TextView currentPlaceCount;
+   private TextView planeNumber;
+   private Dialog dialog;
+   private RemoveItemCallBack removeItemCallBack;
+    public PlaneFragment(ArrayList<StaticHorizentalListModel> item, ArrayList<PlaneDataModel> data, RemoveItemCallBack removeItemCallBack){
         this.item = item;
         this.data = data;
+        this.removeItemCallBack = removeItemCallBack;
     }
 
     @Override
@@ -34,11 +50,13 @@ public class  PlaneFragment extends Fragment {
     }
 
     private Context context;
+    private Activity activity;
 
     @Override
     public void onAttach(Activity activity){
         super.onAttach(activity);
         this.context = activity;
+        this.activity = activity;
     }
 
 
@@ -58,6 +76,9 @@ public class  PlaneFragment extends Fragment {
 
     }
 
+    private RelativeLayout planeContent;
+    private View selectionIcon;
+    private View planed;
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
@@ -75,10 +96,10 @@ public class  PlaneFragment extends Fragment {
                 RelativeLayout planeList = view.findViewById(R.id.planeHList);
                 View planeHorizentalList = inflater.inflate(R.layout.plane_horizental_list, container, false);
                 planeList.addView(planeHorizentalList);
-                RelativeLayout planeContent = view.findViewById(R.id.planeContent);
-                View selectionIcon = inflater.inflate(R.layout.selection_icon, container, false);
+                 planeContent = view.findViewById(R.id.planeContent);
+                 selectionIcon = inflater.inflate(R.layout.selection_icon, container, false);
                 planeContent.addView(selectionIcon);
-                final View  planed = inflater.inflate(R.layout.plane_content, container, false);
+                planed = inflater.inflate(R.layout.plane_content, container, false);
                 planed.findViewById(R.id.editCurrentPlane).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -88,45 +109,113 @@ public class  PlaneFragment extends Fragment {
                     }
                 });
                 recyclerView = view.findViewById(R.id.rv_plane);
-                HorizentalListCallBack<StaticHorizentalListAdapter.StaticHorizentalListViewHolder, Integer, Boolean, Integer> callbackHorizentalList = (StaticHorizentalListAdapter.StaticHorizentalListViewHolder holder, Integer position, Boolean isFirstClicked) -> {
+                HorizentalListCallBack<RecyclerView.ViewHolder, Integer, Boolean, Integer> callbackHorizentalList = (RecyclerView.ViewHolder holder, Integer position, Boolean isFirstClicked) -> {
                     if(isFirstClicked) {
                         planeContent.removeView(selectionIcon);
                         planeContent.addView(planed);
                     }
+                    this.currentPosition = position;
                     currentPlaneData = data.get(position);
-                    TextView id = view.findViewById(R.id.planeId);
-                    TextView name = view.findViewById(R.id.planeName);
-                    TextView placeCount = view.findViewById(R.id.planePlaceCount);
-                    id.setText(currentPlaneData.getId());
-                    name.setText(currentPlaneData.getName());
-                    placeCount.setText(currentPlaneData.getPlaceCount());
+                    currentId = view.findViewById(R.id.planeId);
+                    currentName = view.findViewById(R.id.planeName);
+                    currentPlaceCount = view.findViewById(R.id.planePlaceCount);
+                    currentId.setText(currentPlaneData.getId());
+                    currentName.setText(currentPlaneData.getName());
+                    currentPlaceCount.setText(currentPlaneData.getPlaceCount());
 
                     return 0;
                 };
-                horizentalListAdapter = new StaticHorizentalListAdapter(item, callbackHorizentalList);
                 recyclerView.setLayoutManager(new LinearLayoutManager( view.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                horizentalListAdapter = new StaticHorizentalListAdapter(recyclerView, activity, item, callbackHorizentalList );
                 recyclerView.setAdapter(horizentalListAdapter);
-                TextView planeNumber = view.findViewById(R.id.planeNumber);
+                 planeNumber = view.findViewById(R.id.planeNumber);
                 planeNumber.setText(String.valueOf(data.size()));
-
-
-
-
+                dialog = new Dialog(activity);
+                dialog.setContentView(R.layout.remove_dialog);
+                dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.setCancelable(false);
+                MaterialButton yes = dialog.findViewById(R.id.acceptRemove);
+                MaterialButton no = dialog.findViewById(R.id.declineRemove);
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeItemCallBack.removeItem(currentPosition);
+                        planeNumber.setText(String.valueOf(data.size()));
+                        horizentalListAdapter.setIsFirstClicked(true);
+                        horizentalListAdapter.setRow_index(-1);
+                        horizentalListAdapter.notifyDataSetChanged();
+                        planeContent.removeView(planed);
+                        planeContent.addView(selectionIcon);
+                        dialog.dismiss();
+                    }
+                });
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                planed.findViewById(R.id.removeCurrentPlane).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TextView textDialog = dialog.findViewById(R.id.planeRemoveId);
+                        textDialog.setText("Avion numéro : " + currentId.getText());
+                        dialog.show();
+                    }
+                });
     }
 
+
+    private int getPlaneDataPosition(String id){
+        for(int i=0; i<data.size();i++){
+            if(data.get(i).getId().equals(id)) return i;
+        }
+        return -1;
+    }
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    public void onActivityResult(int requestCode, int resultCode, Intent d)
     {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        super.onActivityResult(requestCode, resultCode, d);
+        if(resultCode == Activity.RESULT_CANCELED) return;
+        switch (resultCode){
             case RequestCode.REQUEST_CODE_ADD_PLANE:
-                Toast.makeText(context, "add new plane data", 2000).show();
+                PlaneDataModel pl = (PlaneDataModel) d.getParcelableExtra("data");
+                if(currentPosition != null && currentPosition == 0) horizentalListAdapter.setRow_index(1);
+                horizentalListAdapter.notifyDataSetChanged();
+                planeNumber.setText(String.valueOf(data.size()));
+                Toast.makeText(context, "Avion ajouter avec succés", 1000).show();
                 break;
             case RequestCode.REQUEST_CODE_EDIT_PLANE:
-                Toast.makeText(context, "edited plane data", 2000).show();
+                PlaneDataModel currentD = (PlaneDataModel) d.getParcelableExtra("data");
+                horizentalListAdapter.notifyDataSetChanged();
+                int p = getPlaneDataPosition(currentD.getId());
+                if(currentPosition != null && currentPosition == p){
+                    currentPlaneData = currentD;
+                    currentId.setText(currentD.getId());
+                    currentName.setText(currentD.getName());
+                    currentPlaceCount.setText(currentD.getPlaceCount());
+
+                }
+                planeNumber.setText(String.valueOf(data.size()));
+                Toast.makeText(context, "Données modifier avec succés", 1000).show();
                 break;
             case RequestCode.REQUEST_CODE_REMOVE_PLANE:
-                Toast.makeText(context, "remove plane data", 2000).show();
+                PlaneDataModel rmData = (PlaneDataModel) d.getParcelableExtra("data");
+                int pos = getPlaneDataPosition(rmData.getId());
+                removeItemCallBack.removeItem(pos);
+                planeNumber.setText(String.valueOf(data.size()));
+                if(pos == currentPosition){
+                    horizentalListAdapter.setIsFirstClicked(true);
+                    horizentalListAdapter.setRow_index(-1);
+                    planeContent.removeView(planed);
+                    planeContent.addView(selectionIcon);
+                }
+                if(pos < currentPosition){
+                    horizentalListAdapter.setRow_index(currentPosition-1);
+                }
+                horizentalListAdapter.notifyDataSetChanged();
+                Toast.makeText(context, "Données supprimer avec succés", 1000).show();
                 break;
             default:
 
@@ -134,4 +223,7 @@ public class  PlaneFragment extends Fragment {
 
     }
 
+    public void setItem(ArrayList<StaticHorizentalListModel> item) {
+        this.item = item;
+    }
 }

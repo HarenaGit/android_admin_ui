@@ -1,5 +1,6 @@
 package mg.ny.adminui;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -11,55 +12,124 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import mg.ny.adminui.HorizentalListInterface.LoadMore;
 
 
+class LoadingViewHolder extends RecyclerView.ViewHolder{
 
-public class StaticHorizentalListAdapter extends RecyclerView.Adapter<StaticHorizentalListAdapter.StaticHorizentalListViewHolder> {
+    public ProgressBar progressBar;
+    public LoadingViewHolder(@NonNull View itemView) {
+        super(itemView);
+        progressBar = itemView.findViewById(R.id.smallLoader);
+    }
+}
 
+class ItemViewHolder extends  RecyclerView.ViewHolder{
+    TextView text;
+    RelativeLayout horizentalLayout;
+    public ItemViewHolder(@NonNull View itemView) {
+        super(itemView);
+        text = itemView.findViewById(R.id.horizentalTextItem);
+        horizentalLayout = itemView.findViewById(R.id.horizentalLayout);
+    }
+}
 
+public class StaticHorizentalListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private final int VIEW_TYPE_ITEM = 0,VIEW_TYPE_LOADING = 1;
+    LoadMore loadMore;
+    boolean isLoading;
+    Activity activity;
     private ArrayList<StaticHorizentalListModel> items;
-    private HorizentalListCallBack<StaticHorizentalListViewHolder, Integer, Boolean, Integer> onClickCallback;
+    int visibleThreshold = 5;
+    int lastVisibleItem, totalItemCount;
+
+    private HorizentalListCallBack<RecyclerView.ViewHolder, Integer, Boolean, Integer> onClickCallback;
     int row_index = -1;
     Boolean isFirstClicked = true;
-    public StaticHorizentalListAdapter(ArrayList<StaticHorizentalListModel> items, HorizentalListCallBack<StaticHorizentalListViewHolder, Integer, Boolean, Integer> onClickCallback){
+
+    public StaticHorizentalListAdapter(RecyclerView recyclerView,Activity activity, ArrayList<StaticHorizentalListModel> items,HorizentalListCallBack<RecyclerView.ViewHolder, Integer, Boolean, Integer> onClickCallback) {
+        this.activity = activity;
         this.items = items;
         this.onClickCallback = onClickCallback;
+
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                totalItemCount = linearLayoutManager.getItemCount();
+                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                if(!isLoading && totalItemCount <= lastVisibleItem+visibleThreshold){
+                    if(loadMore != null)
+                        loadMore.onLoadMore();
+                    isLoading = true;
+                }
+            }
+        });
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        return items.get(position) == null ? VIEW_TYPE_LOADING:VIEW_TYPE_ITEM;
+    }
+
+    public void setLoadMore(LoadMore loadMore){
+        this.loadMore = loadMore;
+    }
+
 
     @NonNull
     @Override
-    public StaticHorizentalListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.horizental_list_item, parent, false);
-        StaticHorizentalListViewHolder horizentaViewHolder = new StaticHorizentalListViewHolder(view);
-        return horizentaViewHolder;
-    }
+
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+       if(viewType == VIEW_TYPE_ITEM){
+           View view = LayoutInflater.from(activity).inflate(R.layout.horizental_list_item, parent, false);
+           return new ItemViewHolder(view);
+       }
+       else if (viewType == VIEW_TYPE_LOADING){
+           View view = LayoutInflater.from(activity).inflate(R.layout.loader, parent, false);
+           return new LoadingViewHolder(view);
+       }
+       return null;
+}
 
     @Override
-    public void onBindViewHolder(@NonNull StaticHorizentalListViewHolder holder, int position) {
-        StaticHorizentalListModel currentItem = items.get(position);
-        holder.text.setText(currentItem.getText());
 
-        holder.horizentalLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                row_index = position;
-                notifyDataSetChanged();
-                onClickCallback.apply(holder, position, isFirstClicked);
-                isFirstClicked = false;
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        if(holder instanceof ItemViewHolder){
+            StaticHorizentalListModel currentItem = items.get(position);
+            ItemViewHolder viewHolder = (ItemViewHolder) holder;
+            viewHolder.text.setText(currentItem.getText());
+
+            viewHolder.horizentalLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    row_index = position;
+                    notifyDataSetChanged();
+                    onClickCallback.apply(viewHolder, position, isFirstClicked);
+                    isFirstClicked = false;
+                }
+            });
+            if(row_index == position) {
+                viewHolder.text.setBackgroundResource(R.drawable.horizental_selected_list_bg);
+                viewHolder.text.setTextColor(viewHolder.text.getResources().getColor(R.color.white));
             }
-        });
-        if(row_index == position) {
-            holder.text.setBackgroundResource(R.drawable.horizental_selected_list_bg);
-            holder.text.setTextColor(holder.text.getResources().getColor(R.color.white));
+            else{
+                viewHolder.text.setBackgroundResource(R.drawable.horizental_list_bg);
+                viewHolder.text.setTextColor(viewHolder.text.getResources().getColor(R.color.dark_grey));
+            }
         }
-        else{
-            holder.text.setBackgroundResource(R.drawable.horizental_list_bg);
-            holder.text.setTextColor(holder.text.getResources().getColor(R.color.dark_grey));
+        else if(holder instanceof LoadingViewHolder){
+            LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
         }
+
     }
 
     @Override
@@ -67,14 +137,17 @@ public class StaticHorizentalListAdapter extends RecyclerView.Adapter<StaticHori
         return items.size();
     }
 
-    public static class StaticHorizentalListViewHolder extends RecyclerView.ViewHolder{
-
-        TextView text;
-        RelativeLayout horizentalLayout;
-        public StaticHorizentalListViewHolder(@NonNull View itemView) {
-            super(itemView);
-            text = itemView.findViewById(R.id.horizentalTextItem);
-            horizentalLayout = itemView.findViewById(R.id.horizentalLayout);
-        }
+    public void setLoaded(){
+        isLoading = false;
     }
+    public void setIsFirstClicked(Boolean t){
+        isFirstClicked = t;
+    }
+    public void setRow_index(int index){
+        row_index = index;
+    }
+    public int getRow_index(){
+        return row_index;
+    }
+
 }

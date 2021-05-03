@@ -44,6 +44,7 @@ public class AddplaneActivity extends AppCompatActivity {
                     public void run() {
                         loading.setVisibility(View.GONE);
                         Intent intent=new Intent();
+                        intent.putExtra("data", new PlaneDataModel(id.getText().toString(), name.getText().toString(), place.getText().toString()));
                         setResult(RequestCode.REQUEST_CODE_ADD_PLANE,intent);
                         finish();
                     }
@@ -54,7 +55,9 @@ public class AddplaneActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                onBackPressed();
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_CANCELED, intent);
+                finish();
             }
         });
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
