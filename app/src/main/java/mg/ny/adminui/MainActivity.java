@@ -3,35 +3,32 @@
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.zip.Inflater;
 
-public class MainActivity extends AppCompatActivity {
+import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.view_logics.flight_view.fragment.FlightFragment;
+import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListModel;
+import mg.ny.adminui.view_logics.public_component_view.interfaces.RemoveItemCallBack;
+import mg.ny.adminui.view_logics.plane_view.activity.SearchActivity;
+import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
+
+ public class MainActivity extends AppCompatActivity {
 
 
     private static final String TAG = MainActivity.class.getSimpleName();

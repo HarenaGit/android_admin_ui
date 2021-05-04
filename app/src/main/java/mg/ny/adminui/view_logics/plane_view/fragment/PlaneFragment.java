@@ -1,4 +1,4 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.plane_view.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -10,8 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +20,16 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
-import mg.ny.adminui.HorizentalListInterface.LoadMore;
+import mg.ny.adminui.view_logics.public_component_view.interfaces.HorizentalListCallBack;
+import mg.ny.adminui.R;
+import mg.ny.adminui.view_logics.public_component_view.interfaces.RemoveItemCallBack;
+import mg.ny.adminui.RequestCode;
+import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListAdapter;
+import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListModel;
+import mg.ny.adminui.view_logics.plane_view.activity.AddplaneActivity;
+import mg.ny.adminui.view_logics.plane_view.activity.EditplaneActivity;
+import mg.ny.adminui.data_model.PlaneDataModel;
 
 public class  PlaneFragment extends Fragment {
 

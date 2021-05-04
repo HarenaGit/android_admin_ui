@@ -1,8 +1,6 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.public_component_view.horizentalList;
 
 import android.app.Activity;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +9,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import mg.ny.adminui.HorizentalListInterface.LoadMore;
+import mg.ny.adminui.R;
+import mg.ny.adminui.view_logics.public_component_view.horizentalList.HorizentalListInterface.LoadMore;
+import mg.ny.adminui.view_logics.public_component_view.interfaces.HorizentalListCallBack;
 
 
 class LoadingViewHolder extends RecyclerView.ViewHolder{

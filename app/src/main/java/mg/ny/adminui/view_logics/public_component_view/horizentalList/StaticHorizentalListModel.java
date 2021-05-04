@@ -1,4 +1,4 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.public_component_view.horizentalList;
 
 public class StaticHorizentalListModel {
     private String text;

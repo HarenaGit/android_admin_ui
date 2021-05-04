@@ -1,4 +1,4 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.plane_view.adapter.search_adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,10 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import mg.ny.adminui.R;
+import mg.ny.adminui.data_model.PlaneDataModel;
 
 public class PlaneListAdapter extends ArrayAdapter<PlaneDataModel> {
 

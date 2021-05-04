@@ -1,26 +1,20 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.plane_view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -28,11 +22,13 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.google.android.material.button.MaterialButton;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+
+import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.view_logics.plane_view.adapter.search_adapter.PlaneListAdapter;
+import mg.ny.adminui.R;
+import mg.ny.adminui.RequestCode;
 
 public class SearchActivity extends AppCompatActivity {
 

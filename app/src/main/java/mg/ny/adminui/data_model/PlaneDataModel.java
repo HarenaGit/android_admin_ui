@@ -1,4 +1,4 @@
-package mg.ny.adminui;
+package mg.ny.adminui.data_model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

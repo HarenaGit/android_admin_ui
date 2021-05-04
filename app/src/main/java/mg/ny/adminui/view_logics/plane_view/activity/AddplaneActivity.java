@@ -1,7 +1,8 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.plane_view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,10 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.google.android.material.button.MaterialButton;
+
+import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.R;
+import mg.ny.adminui.RequestCode;
 
 public class AddplaneActivity extends AppCompatActivity {
 

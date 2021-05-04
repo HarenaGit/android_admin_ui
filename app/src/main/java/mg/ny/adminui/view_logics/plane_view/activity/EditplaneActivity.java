@@ -1,4 +1,4 @@
-package mg.ny.adminui;
+package mg.ny.adminui.view_logics.plane_view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.android.material.button.MaterialButton;
+
+import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.R;
+import mg.ny.adminui.RequestCode;
 
 public class EditplaneActivity extends AppCompatActivity {
 

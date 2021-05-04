@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlaneFragment"
+    tools:context=".view_logics.plane_view.fragment.PlaneFragment"
     android:id="@+id/planeFragement"
     >
 
