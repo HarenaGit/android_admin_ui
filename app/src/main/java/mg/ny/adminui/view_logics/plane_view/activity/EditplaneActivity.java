@@ -49,7 +49,7 @@ public class EditplaneActivity extends AppCompatActivity {
         });
         name.setText(data.getName());
         name.requestFocus();
-        placeCount.setText(data.getPlaceCount());
+        placeCount.setText(data.getPlaneSize());
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -6,16 +6,16 @@ import android.os.Parcelable;
 public class PlaneDataModel implements Parcelable {
     private String id;
     private String name;
-    private String placeCount;
-    public PlaneDataModel(String id, String name, String placeCount){
+    private String planeSize;
+    public PlaneDataModel(String id, String name, String planeSize){
         this.id = id;
         this.name = name;
-        this.placeCount = placeCount;
+        this.planeSize = planeSize;
     }
     public PlaneDataModel(Parcel source){
         id = source.readString();
         name = source.readString();
-        placeCount = source.readString();
+        planeSize = source.readString();
     }
     public String getId(){
         return  this.id;
@@ -23,8 +23,8 @@ public class PlaneDataModel implements Parcelable {
     public String getName(){
         return this.name;
     }
-    public String getPlaceCount(){
-        return this.placeCount;
+    public String getPlaneSize(){
+        return this.planeSize;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class PlaneDataModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(name);
-        dest.writeString(placeCount);
+        dest.writeString(planeSize);
     }
 
     public static final Creator<PlaneDataModel> CREATOR = new Creator<PlaneDataModel>() {

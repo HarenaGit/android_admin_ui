@@ -130,7 +130,7 @@ public class  PlaneFragment extends Fragment {
                     currentPlaceCount = view.findViewById(R.id.planePlaceCount);
                     currentId.setText(currentPlaneData.getId());
                     currentName.setText(currentPlaneData.getName());
-                    currentPlaceCount.setText(currentPlaneData.getPlaceCount());
+                    currentPlaceCount.setText(currentPlaneData.getPlaneSize());
 
                     return 0;
                 };
@@ -214,7 +214,7 @@ public class  PlaneFragment extends Fragment {
                     currentPlaneData = currentD;
                     currentId.setText(currentD.getId());
                     currentName.setText(currentD.getName());
-                    currentPlaceCount.setText(currentD.getPlaceCount());
+                    currentPlaceCount.setText(currentD.getPlaneSize());
 
                 }
                 planeNumber.setText(String.valueOf(data.size()));

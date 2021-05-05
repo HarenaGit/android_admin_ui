@@ -39,7 +39,7 @@ public class PlaneListAdapter extends ArrayAdapter<PlaneDataModel> {
 
         name.setText(p.getName());
         id.setText(p.getId());
-        placeCount.setText("Nombres de place : " + p.getPlaceCount());
+        placeCount.setText("Nombres de place : " + p.getPlaneSize());
 
         return convertView;
     }
@@ -70,7 +70,7 @@ public class PlaneListAdapter extends ArrayAdapter<PlaneDataModel> {
                 ArrayList<PlaneDataModel> filter = new ArrayList<PlaneDataModel>();
 
                 for (PlaneDataModel object : sourceObjects) {
-                    if(object.getId().toLowerCase().contains(filterSeq) || object.getName().toLowerCase().contains(filterSeq) || object.getPlaceCount().toLowerCase().contains(filterSeq))
+                    if(object.getId().toLowerCase().contains(filterSeq) || object.getName().toLowerCase().contains(filterSeq) || object.getPlaneSize().toLowerCase().contains(filterSeq))
                        filter.add(object);
                 }
                 result.count = filter.size();
