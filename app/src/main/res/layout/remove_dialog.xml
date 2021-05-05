@@ -8,9 +8,10 @@
     android:layout_marginBottom="10dp"
         >
         <LinearLayout
+            android:id="@+id/removeDialogContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:visibility="visible"
             android:orientation="vertical"
             >
 
@@ -86,4 +87,21 @@
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/removeDialogLoading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            >
+            <com.github.ybq.android.spinkit.SpinKitView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/spin_kit"
+                style="@style/SpinKitView.FadingCircle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:SpinKit_Color="@color/blue"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
     </RelativeLayout>

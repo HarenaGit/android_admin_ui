@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -26,6 +28,7 @@ public class EditplaneActivity extends AppCompatActivity {
     private EditText name;
     private EditText placeCount;
     private MaterialButton save;
+    private RelativeLayout loading;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,15 +60,23 @@ public class EditplaneActivity extends AppCompatActivity {
                 finish();
             }
         });
+        loading = findViewById(R.id.editPlaneLoading);
         save = findViewById(R.id.saveEditPlane);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                Intent intent = new Intent();
-                intent.putExtra("data", new PlaneDataModel(id.getText().toString(), name.getText().toString(), placeCount.getText().toString()));
-                setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
-                finish();
+                loading.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loading.setVisibility(View.GONE);
+                        Intent intent = new Intent();
+                        intent.putExtra("data", new PlaneDataModel(id.getText().toString(), name.getText().toString(), placeCount.getText().toString()));
+                        setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);
+                        finish();
+                    }
+                }, 2000);
             }
         });
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);

@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -38,6 +40,8 @@ public class SearchActivity extends AppCompatActivity {
     private PlaneListAdapter adapter;
     private SwipeMenuListView listView;
     private InputMethodManager imm;
+    private LinearLayout contentDialog;
+    private RelativeLayout loadingDialog;
     private int p;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,7 @@ public class SearchActivity extends AppCompatActivity {
 
         adapter = new PlaneListAdapter(this, data);
         listView.setAdapter(adapter);
-
+        adapter.notifyDataSetChanged();
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
             @Override
@@ -99,14 +103,20 @@ public class SearchActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         Button yes =  dialog.findViewById(R.id.acceptRemove);
         Button no = dialog.findViewById(R.id.declineRemove);
+        contentDialog = dialog.findViewById(R.id.removeDialogContent);
+        loadingDialog = dialog.findViewById(R.id.removeDialogLoading);
         yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                PlaneDataModel currentPlaneData = data.get(p);
-                intent.putExtra("data", currentPlaneData);
-                setResult(RequestCode.REQUEST_CODE_REMOVE_PLANE, intent);
-                finish();
+              //  contentDialog.setVisibility(View.GONE);
+               // loadingDialog.setVisibility(View.VISIBLE);
+
+                        Intent intent = new Intent();
+                        PlaneDataModel currentPlaneData = data.get(p);
+                        intent.putExtra("data", currentPlaneData);
+                        setResult(RequestCode.REQUEST_CODE_REMOVE_PLANE, intent);
+                        finish();
+
             }
         });
         no.setOnClickListener(new View.OnClickListener() {

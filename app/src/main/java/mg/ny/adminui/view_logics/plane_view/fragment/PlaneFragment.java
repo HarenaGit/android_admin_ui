@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,8 @@ public class  PlaneFragment extends Fragment {
    private TextView planeNumber;
    private Dialog dialog;
    private RemoveItemCallBack removeItemCallBack;
+   private LinearLayout contentDialog;
+   private RelativeLayout loadingDialog;
     public PlaneFragment(ArrayList<StaticHorizentalListModel> item, ArrayList<PlaneDataModel> data, RemoveItemCallBack removeItemCallBack){
         this.item = item;
         this.data = data;
@@ -142,17 +146,28 @@ public class  PlaneFragment extends Fragment {
                 dialog.setCancelable(false);
                 MaterialButton yes = dialog.findViewById(R.id.acceptRemove);
                 MaterialButton no = dialog.findViewById(R.id.declineRemove);
+                contentDialog = dialog.findViewById(R.id.removeDialogContent);
+                loadingDialog = dialog.findViewById(R.id.removeDialogLoading);
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        removeItemCallBack.removeItem(currentPosition);
-                        planeNumber.setText(String.valueOf(data.size()));
-                        horizentalListAdapter.setIsFirstClicked(true);
-                        horizentalListAdapter.setRow_index(-1);
-                        horizentalListAdapter.notifyDataSetChanged();
-                        planeContent.removeView(planed);
-                        planeContent.addView(selectionIcon);
-                        dialog.dismiss();
+                      contentDialog.setVisibility(View.GONE);
+                      loadingDialog.setVisibility(View.VISIBLE);
+                      new Handler().postDelayed(new Runnable() {
+                          @Override
+                          public void run() {
+                              removeItemCallBack.removeItem(currentPosition);
+                              planeNumber.setText(String.valueOf(data.size()));
+                              horizentalListAdapter.setIsFirstClicked(true);
+                              horizentalListAdapter.setRow_index(-1);
+                              horizentalListAdapter.notifyDataSetChanged();
+                              planeContent.removeView(planed);
+                              planeContent.addView(selectionIcon);
+                              dialog.dismiss();
+                              contentDialog.setVisibility(View.VISIBLE);
+                              loadingDialog.setVisibility(View.GONE);
+                          }
+                      }, 2000);
                     }
                 });
                 no.setOnClickListener(new View.OnClickListener() {
