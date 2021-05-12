@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import mg.ny.adminui.data.StaticDataGeneration;
+import mg.ny.adminui.data_model.FlightDataModel;
 import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.view_logics.flight_view.activity.SearchFlightActivity;
 import mg.ny.adminui.view_logics.flight_view.fragment.FlightFragment;
 import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListModel;
 import mg.ny.adminui.view_logics.public_component_view.interfaces.RemoveItemCallBack;
@@ -41,6 +44,8 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
     private ImageButton searchButton;
     private ArrayList<PlaneDataModel> planeData;
     private ArrayList<StaticHorizentalListModel> planeItem;
+    private ArrayList<FlightDataModel> flightData;
+    private ArrayList<StaticHorizentalListModel> flightItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +76,11 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
                     searchActivity.putParcelableArrayListExtra("data", planeData);
                     startActivityForResult(searchActivity, RequestCode.REQUEST_CODE_SEARCH_PLANE);
                 }
+                if(activityTitle.getText().equals("Vol")){
+                    Intent searchFAct = new Intent(getApplicationContext(), SearchFlightActivity.class);
+                    searchFAct.putParcelableArrayListExtra("data", flightData);
+                    startActivityForResult(searchFAct, RequestCode.REQUEST_CODE_SEARCH_PLANE);
+                }
 
             }
         });
@@ -94,13 +104,20 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
                 RemoveItemCallBack removeItemCallBack = (int p) -> {
                    planeData.remove(p);
                    planeItem.remove(p);
-                   Log.d("test", "ca devrait marcher alors");
                 };
                 fragment = new PlaneFragment(planeItem, planeData, removeItemCallBack);
                 this.activityTitle.setText("Avion");
                 break;
             case R.id.Flight:
-                fragment = new FlightFragment();
+                if(flightData == null || flightItem == null){
+                    flightData = StaticDataGeneration.getFlightData();
+                    flightItem = StaticDataGeneration.getFlightItem();
+                }
+                RemoveItemCallBack removeFlightData = (int p) -> {
+                    flightData.remove(p);
+                    flightItem.remove(p);
+                };
+                fragment = new FlightFragment(flightItem, flightData, removeFlightData);
                 this.activityTitle.setText("Vol");
                 break;
             case R.id.Reservation:
@@ -141,16 +158,21 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
                 }, 2000);
     }
 
+     private int getFlightDataPosition(String id){
+         for(int i=0; i<flightData.size();i++){
+             if(flightData.get(i).getId().equals(id)) return i;
+         }
+         return -1;
+     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("test", "result code : " + resultCode);
         if(resultCode == Activity.RESULT_CANCELED) return;
         switch (resultCode){
             case RequestCode.REQUEST_CODE_ADD_PLANE:
                 PlaneDataModel currentPlaneData = (PlaneDataModel) data.getParcelableExtra("data");
                 addPlaneData(currentPlaneData);
                 addPlaneItem(currentPlaneData.getName());
-
                 break;
             case RequestCode.REQUEST_CODE_EDIT_PLANE:
                 PlaneDataModel currentData = (PlaneDataModel) data.getParcelableExtra("data");
@@ -158,6 +180,19 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
                 if(currentPosition>=0){
                     setPlaneData(currentPosition, currentData);
                     setPlaneItem(currentPosition, new StaticHorizentalListModel(currentData.getName()));
+                }
+                break;
+            case RequestCode.REQUEST_CODE_ADD_FLIGHT:
+                FlightDataModel currentFlightData = (FlightDataModel) data.getParcelableExtra("data");
+                flightData.add(0, currentFlightData);
+                flightItem.add(0, new StaticHorizentalListModel(currentFlightData.getId()));
+                break;
+            case RequestCode.REQUEST_CODE_EDIT_FLIGHT:
+                FlightDataModel currentFlData = (FlightDataModel) data.getParcelableExtra("data");
+                int currentFlPos = getFlightDataPosition(currentFlData.getId());
+                if(currentFlPos>=0){
+                    flightData.set(currentFlPos, currentFlData);
+                    flightItem.set(currentFlPos, new StaticHorizentalListModel(currentFlData.getId()));
                 }
                 break;
             default:
@@ -187,29 +222,10 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
         return -1;
     }
     private ArrayList<PlaneDataModel>  planeData(){
-
-        ArrayList<PlaneDataModel> data = new ArrayList<>();
-        data.add(new PlaneDataModel("AV-0001", "Jet Privée", "56"));
-        data.add(new PlaneDataModel("AV-0002", "AIR261-45", "23"));
-        data.add(new PlaneDataModel("AV-0003", "Bus2", "14"));
-        data.add(new PlaneDataModel("AV-0004", "AIR265-85", "67"));
-        data.add(new PlaneDataModel("AV-0005", "AIR234-78", "45"));
-        data.add(new PlaneDataModel("AV-0006", "Jet Privée xoxo", "23"));
-
-        return data;
+        return StaticDataGeneration.getPlaneData();
     }
     private ArrayList<StaticHorizentalListModel> planeItem(){
-        ArrayList<StaticHorizentalListModel> item = new ArrayList<>();
-        item.add(new StaticHorizentalListModel("Jet Privée"));
-        item.add(new StaticHorizentalListModel("AIR261-45"));
-        item.add(new StaticHorizentalListModel("Bus2"));
-        item.add(new StaticHorizentalListModel("AIR265-85"));
-        item.add(new StaticHorizentalListModel("AIR234-78"));
-        item.add(new StaticHorizentalListModel("Jet Privée xoxo"));
-
-
-
-        return item;
+        return StaticDataGeneration.getPlaneHorizentalItem();
     }
 
 

@@ -47,7 +47,6 @@ public class AddplaneActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        loading.setVisibility(View.GONE);
                         Intent intent=new Intent();
                         intent.putExtra("data", new PlaneDataModel(id.getText().toString(), name.getText().toString(), place.getText().toString()));
                         setResult(RequestCode.REQUEST_CODE_ADD_PLANE,intent);

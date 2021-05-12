@@ -47,7 +47,7 @@
                             android:layout_centerInParent="true"
                             android:fontFamily="@font/segeouibold"
                             android:letterSpacing="0.15"
-                            android:text="Changer des info."
+                            android:text="Nouvelle avion"
                             android:textAllCaps="false"
                             android:textColor="@color/blue"
                             android:textSize="20dp"

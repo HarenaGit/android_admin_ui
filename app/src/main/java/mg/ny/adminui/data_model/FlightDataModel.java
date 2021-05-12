@@ -87,11 +87,12 @@ public class FlightDataModel implements Parcelable{
         dest.writeString(id);
         dest.writeString(plane);
         dest.writeString(planeId);
+        dest.writeString(cost);
         dest.writeString(departureCity);
         dest.writeString(arrivalCity);
         dest.writeString(departureDate);
-        dest.writeString(arrivalCity);
-        dest.writeString(cost);
+        dest.writeString(arrivalDate);
+
     }
     public FlightDataModel(String id, String plane, String planeId, String cost, String departureCity, String arrivalCity, String departureDate, String arrivalDate) {
         this.id = id;

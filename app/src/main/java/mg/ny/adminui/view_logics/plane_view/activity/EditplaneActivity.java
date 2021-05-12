@@ -70,7 +70,6 @@ public class EditplaneActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        loading.setVisibility(View.GONE);
                         Intent intent = new Intent();
                         intent.putExtra("data", new PlaneDataModel(id.getText().toString(), name.getText().toString(), placeCount.getText().toString()));
                         setResult(RequestCode.REQUEST_CODE_EDIT_PLANE, intent);

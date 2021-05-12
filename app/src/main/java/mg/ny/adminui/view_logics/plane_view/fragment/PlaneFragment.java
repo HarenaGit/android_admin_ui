@@ -225,6 +225,11 @@ public class  PlaneFragment extends Fragment {
                 int pos = getPlaneDataPosition(rmData.getId());
                 removeItemCallBack.removeItem(pos);
                 planeNumber.setText(String.valueOf(data.size()));
+                if(currentPosition == null){
+                    horizentalListAdapter.notifyDataSetChanged();
+                    Toast.makeText(context, "Données supprimer avec succés", 1000).show();
+                    return;
+                }
                 if(pos == currentPosition){
                     horizentalListAdapter.setIsFirstClicked(true);
                     horizentalListAdapter.setRow_index(-1);
