@@ -28,12 +28,9 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import java.util.ArrayList;
 
 import mg.ny.adminui.R;
-import mg.ny.adminui.RequestCode;
+import mg.ny.adminui.view_logics.RequestCode;
 import mg.ny.adminui.data_model.FlightDataModel;
-import mg.ny.adminui.data_model.PlaneDataModel;
 import mg.ny.adminui.view_logics.flight_view.adapter.search_adapter.FlightListAdapter;
-import mg.ny.adminui.view_logics.plane_view.activity.EditplaneActivity;
-import mg.ny.adminui.view_logics.plane_view.adapter.search_adapter.PlaneListAdapter;
 
 public class SearchFlightActivity extends AppCompatActivity {
 

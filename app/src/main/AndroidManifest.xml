@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AdminUI">
-        <activity android:name=".view_logics.flight_view.activity.EditFlightActivity"></activity>
+        <activity android:name=".view_logics.reservation_view.activity.SearchReservationActivity"></activity>
+        <activity android:name=".view_logics.reservation_view.activity.EditReservationActivity" />
+        <activity android:name=".view_logics.reservation_view.activity.AddReservationActivity" />
+        <activity android:name=".view_logics.flight_view.activity.EditFlightActivity" />
         <activity android:name=".view_logics.flight_view.activity.AddFlightActivity" />
         <activity android:name=".view_logics.flight_view.activity.MainActivity" />
         <activity android:name=".view_logics.flight_view.activity.SearchFlightActivity" />

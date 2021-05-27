@@ -68,7 +68,7 @@
                     android:layout_centerVertical="true"
                     android:background="@color/backgroundColor"
                     android:elevation="0dp"
-                    android:src="@drawable/ic_notification"
+                    android:src="@drawable/ic_vertical_dot"
                     android:tint="@color/blue"
                     />
 

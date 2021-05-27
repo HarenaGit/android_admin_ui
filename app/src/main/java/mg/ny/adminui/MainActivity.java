@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -24,12 +23,17 @@ import java.util.concurrent.ExecutionException;
 import mg.ny.adminui.data.StaticDataGeneration;
 import mg.ny.adminui.data_model.FlightDataModel;
 import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.data_model.ReservationDataModel;
+import mg.ny.adminui.view_logics.RequestCode;
+import mg.ny.adminui.view_logics.dashboard_view.fragment.DashboardFragment;
 import mg.ny.adminui.view_logics.flight_view.activity.SearchFlightActivity;
 import mg.ny.adminui.view_logics.flight_view.fragment.FlightFragment;
 import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListModel;
 import mg.ny.adminui.view_logics.public_component_view.interfaces.RemoveItemCallBack;
 import mg.ny.adminui.view_logics.plane_view.activity.SearchActivity;
 import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
+import mg.ny.adminui.view_logics.reservation_view.fragment.ReservationFragment;
+import mg.ny.adminui.view_logics.visualization_view.fragment.VisualisationFragment;
 
  public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +50,8 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
     private ArrayList<StaticHorizentalListModel> planeItem;
     private ArrayList<FlightDataModel> flightData;
     private ArrayList<StaticHorizentalListModel> flightItem;
+    private ArrayList<ReservationDataModel> reservationData;
+    private ArrayList<StaticHorizentalListModel> reservationItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +64,15 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
         if(savedInstanceState == null){
             this.bottomMenu.setItemSelected(R.id.Dashboard, true);
             fragmentManager = getSupportFragmentManager();
-            fragment = new DashboardFragment();
+            if(planeData == null || planeItem == null){
+                planeData = planeData();
+                planeItem = planeItem();
+            }
+            RemoveItemCallBack rem = (int p) -> {
+                planeData.remove(p);
+                planeItem.remove(p);
+            };
+            fragment = new DashboardFragment(StaticDataGeneration.getPlaneDashItem(), planeData, rem);
             fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
             progressBar.setVisibility(View.GONE);
         }
@@ -93,7 +107,15 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
         getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         switch (id){
             case R.id.Dashboard:
-                fragment = new DashboardFragment();
+                if(planeData == null || planeItem == null){
+                    planeData = planeData();
+                    planeItem = planeItem();
+                }
+                RemoveItemCallBack rem = (int p) -> {
+                    planeData.remove(p);
+                    planeItem.remove(p);
+                };
+                fragment = new DashboardFragment(StaticDataGeneration.getPlaneDashItem(), planeData, rem);
                 this.activityTitle.setText("Tableau de bord");
                 break;
             case R.id.Plane:
@@ -121,11 +143,25 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
                 this.activityTitle.setText("Vol");
                 break;
             case R.id.Reservation:
-                fragment = new ReservationFragment();
+                if(reservationData == null || reservationItem == null){
+                    reservationData = StaticDataGeneration.getReservationData();
+                    reservationItem = StaticDataGeneration.getReservationItem();
+                }
+                RemoveItemCallBack removeReservationData = (int p) -> {
+                    reservationData.remove(p);
+                 };
+                fragment = new ReservationFragment(reservationItem, reservationData, removeReservationData);
                 this.activityTitle.setText("Reservation");
                 break;
             case R.id.Visualization:
-                fragment = new VisualisationFragment();
+                if(reservationData == null || reservationItem == null){
+                    reservationData = StaticDataGeneration.getReservationData();
+                    reservationItem = StaticDataGeneration.getReservationItem();
+                }
+                RemoveItemCallBack rm = (int p) -> {
+                    reservationData.remove(p);
+                };
+                fragment = new VisualisationFragment(reservationItem, reservationData, rm);
                 this.activityTitle.setText("Visualisation");
                 break;
         }
@@ -144,7 +180,7 @@ import mg.ny.adminui.view_logics.plane_view.fragment.PlaneFragment;
                            synchronized (this){
                                future.get();
                                progressBar.setVisibility(View.GONE);
-                               if(id != R.id.Dashboard) searchBtn.setVisibility(View.VISIBLE);
+                               if(id != R.id.Dashboard && id != R.id.Visualization) searchBtn.setVisibility(View.VISIBLE);
                                else searchBtn.setVisibility(View.GONE);
                            }
 

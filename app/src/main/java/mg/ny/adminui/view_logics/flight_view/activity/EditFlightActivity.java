@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import mg.ny.adminui.R;
-import mg.ny.adminui.RequestCode;
+import mg.ny.adminui.view_logics.RequestCode;
 import mg.ny.adminui.data.StaticDataGeneration;
 import mg.ny.adminui.data_model.FlightDataModel;
 import mg.ny.adminui.data_model.PlaneDataModel;

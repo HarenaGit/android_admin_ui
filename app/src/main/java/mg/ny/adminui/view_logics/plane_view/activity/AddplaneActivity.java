@@ -17,7 +17,7 @@ import com.google.android.material.button.MaterialButton;
 
 import mg.ny.adminui.data_model.PlaneDataModel;
 import mg.ny.adminui.R;
-import mg.ny.adminui.RequestCode;
+import mg.ny.adminui.view_logics.RequestCode;
 
 public class AddplaneActivity extends AppCompatActivity {
 

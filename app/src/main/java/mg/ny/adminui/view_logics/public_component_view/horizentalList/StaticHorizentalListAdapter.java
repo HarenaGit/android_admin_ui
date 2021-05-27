@@ -28,16 +28,6 @@ class LoadingViewHolder extends RecyclerView.ViewHolder{
     }
 }
 
-class ItemViewHolder extends  RecyclerView.ViewHolder{
-    TextView text;
-    RelativeLayout horizentalLayout;
-    public ItemViewHolder(@NonNull View itemView) {
-        super(itemView);
-        text = itemView.findViewById(R.id.horizentalTextItem);
-        horizentalLayout = itemView.findViewById(R.id.horizentalLayout);
-    }
-}
-
 public class StaticHorizentalListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 0,VIEW_TYPE_LOADING = 1;

@@ -32,6 +32,18 @@ public class  StaticDataGeneration {
         return item;
     }
 
+    public static ArrayList<StaticHorizentalListModel> getPlaneDashItem(){
+        ArrayList<StaticHorizentalListModel> item = new ArrayList<>();
+        item.add(new StaticHorizentalListModel("Tout"));
+        item.add(new StaticHorizentalListModel("Jet Privée"));
+        item.add(new StaticHorizentalListModel("AIR261-45"));
+        item.add(new StaticHorizentalListModel("Bus2"));
+        item.add(new StaticHorizentalListModel("AIR265-85"));
+        item.add(new StaticHorizentalListModel("AIR234-78"));
+        item.add(new StaticHorizentalListModel("Jet Privée xoxo"));
+
+        return item;
+    }
     public static ArrayList<FlightDataModel> getFlightData(){
         ArrayList<FlightDataModel> data = new ArrayList<>();
         data.add(new FlightDataModel("Vol-0001", "Jet Privée", "AV-0001", "240000000ar", "Antananarivo, Madagascar", "Paris,Europe", "12h et 30min p.m le 09 mai 2021", "01h a.m 10 mai 2021" ));
@@ -73,11 +85,11 @@ public class  StaticDataGeneration {
     }
     public static ArrayList<StaticHorizentalListModel> getReservationItem(){
         ArrayList<StaticHorizentalListModel> item = new ArrayList<>();
-        item.add(new StaticHorizentalListModel("Vol-0001 / Jet Privée"));
-        item.add(new StaticHorizentalListModel("Vol-0002 / AIR261-45"));
-        item.add(new StaticHorizentalListModel("Vol-0003 / Bus2"));
-        item.add(new StaticHorizentalListModel("Vol-0004 / AIR265-85"));
-        item.add(new StaticHorizentalListModel("Vol-0005 / AIR234-78"));
+        item.add(new StaticHorizentalListModel("Vol-0001", "Jet Privée"));
+        item.add(new StaticHorizentalListModel("Vol-0002", "AIR261-45"));
+        item.add(new StaticHorizentalListModel("Vol-0003", "Bus2"));
+        item.add(new StaticHorizentalListModel("Vol-0004", "AIR265-85"));
+        item.add(new StaticHorizentalListModel("Vol-0005", "AIR234-78"));
         return item;
     }
 

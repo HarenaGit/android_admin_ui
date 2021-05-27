@@ -1,4 +1,4 @@
-package mg.ny.adminui.view_logics.flight_view.activity;
+package mg.ny.adminui.view_logics.reservation_view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,67 +28,81 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import mg.ny.adminui.R;
-import mg.ny.adminui.view_logics.RequestCode;
 import mg.ny.adminui.data.StaticDataGeneration;
 import mg.ny.adminui.data_model.FlightDataModel;
 import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.data_model.ReservationDataModel;
+import mg.ny.adminui.view_logics.RequestCode;
+import mg.ny.adminui.view_logics.flight_view.activity.AddFlightActivity;
 import mg.ny.adminui.view_logics.flight_view.adapter.spinner_adapter.CustomSpinnerAdapter;
+import mg.ny.adminui.view_logics.reservation_view.adapter.spiner_adapter.NumPlaceSpinnerAdapter;
+import mg.ny.adminui.view_logics.reservation_view.adapter.spiner_adapter.NumVolSpinnerAdapter;
 
-public class AddFlightActivity extends AppCompatActivity {
+public class AddReservationActivity extends AppCompatActivity {
 
     MaterialButton save;
     ImageButton backButton;
-    EditText numVol;
-    EditText dateTimeDepDate;
-    EditText dateTimeArvDate;
-    EditText depCity;
-    EditText arvCity;
-    EditText cost;
-    Spinner plane;
-    int planePosition;
+    EditText numReserv;
+    Spinner numVol;
+    Spinner numPlace;
+    EditText passengerName;
+    EditText dateTimeReserv;
+    int numVolPosition;
+    int numPlacePosition;
+
     private RelativeLayout loading;
     private InputMethodManager imm;
-    private ArrayList<PlaneDataModel> planeList;
+    private ArrayList<FlightDataModel> flightData;
+    private ArrayList<Integer> placeData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_flight);
-        plane = (Spinner) findViewById(R.id.addFlightPlane);
-        planeList = StaticDataGeneration.getPlaneData();
-        plane.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        setContentView(R.layout.activity_add_reservation);
+        numVol = (Spinner) findViewById(R.id.addReservVol);
+        numPlace = (Spinner) findViewById(R.id.addReservPlace);
+
+        flightData = StaticDataGeneration.getFlightData();
+        numVol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                planePosition = position;
+                numVolPosition = position;
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        SpinnerAdapter dataAdapter = new CustomSpinnerAdapter(getApplicationContext(), planeList);
-        plane.setAdapter(dataAdapter);
+        SpinnerAdapter dataAdapter = new NumVolSpinnerAdapter(getApplicationContext(), flightData);
+        numVol.setAdapter(dataAdapter);
 
-        dateTimeDepDate = findViewById(R.id.addFlightDepDate);
-        dateTimeArvDate = findViewById(R.id.addFlightArvDate);
-        dateTimeArvDate.setInputType(InputType.TYPE_NULL);
-        dateTimeDepDate.setInputType(InputType.TYPE_NULL);
-        dateTimeArvDate.setOnClickListener(new View.OnClickListener() {
+        placeData = new ArrayList<>();
+        for(int i=1;i<=100; i++) placeData.add(i);
+        numPlace.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                showDateTimeDialog(dateTimeArvDate);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                numPlacePosition = position;
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        dateTimeDepDate.setOnClickListener(new View.OnClickListener() {
+        SpinnerAdapter placeDataAdapter = new NumPlaceSpinnerAdapter(getApplicationContext(), placeData);
+        numPlace.setAdapter(placeDataAdapter);
+
+
+        dateTimeReserv = findViewById(R.id.addReservDate);
+        dateTimeReserv.setInputType(InputType.TYPE_NULL);
+
+        dateTimeReserv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDateTimeDialog(dateTimeDepDate);
+                showDateTimeDialog(dateTimeReserv);
             }
         });
-        numVol = findViewById(R.id.addFlightId);
-        depCity = findViewById(R.id.addFlightDepCity);
-        arvCity = findViewById(R.id.addFlightArvCity);
-        cost = findViewById(R.id.addFlightCost);
-        plane = findViewById(R.id.addFlightPlane);
+
+        numReserv = findViewById(R.id.addReservId);
+        passengerName = findViewById(R.id.addReservName);
+
         backButton = findViewById(R.id.backButtonFlight);
         save = findViewById(R.id.saveFlightButton);
         loading = findViewById(R.id.addFlightLoading);
@@ -112,8 +126,8 @@ public class AddFlightActivity extends AppCompatActivity {
                     public void run() {
 
                         Intent intent=new Intent();
-                        intent.putExtra("data", new FlightDataModel(numVol.getText().toString(), planeList.get(planePosition).getName(), planeList.get(planePosition).getId(), cost.getText().toString(), depCity.getText().toString(), arvCity.getText().toString(), dateTimeDepDate.getText().toString(), dateTimeArvDate.getText().toString()));
-                        setResult(RequestCode.REQUEST_CODE_ADD_FLIGHT,intent);
+                        intent.putExtra("data", new ReservationDataModel(numReserv.getText().toString().trim(), flightData.get(numVolPosition).getId(), flightData.get(numVolPosition).getPlaneId(), String.valueOf(placeData.get(numPlacePosition)),flightData.get(numVolPosition).getPlane(), dateTimeReserv.getText().toString().trim(), passengerName.getText().toString().trim()));
+                        setResult(RequestCode.REQUEST_CODE_ADD_RESERV,intent);
                         finish();
                     }
                 }, 2000);
@@ -122,7 +136,7 @@ public class AddFlightActivity extends AppCompatActivity {
 
     }
 
-    private void showDateTimeDialog(EditText dateTimeDepDate) {
+    private void showDateTimeDialog(EditText d) {
         final Calendar calendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -136,14 +150,14 @@ public class AddFlightActivity extends AppCompatActivity {
                         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         calendar.set(Calendar.MINUTE, minute);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                        dateTimeDepDate.setText(simpleDateFormat.format(calendar.getTime()));
+                        d.setText(simpleDateFormat.format(calendar.getTime()));
 
 
                     }
                 };
-                new TimePickerDialog(AddFlightActivity.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
+                new TimePickerDialog(AddReservationActivity.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
             }
         };
-        new DatePickerDialog(AddFlightActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(AddReservationActivity.this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 }

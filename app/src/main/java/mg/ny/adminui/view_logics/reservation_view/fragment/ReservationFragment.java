@@ -1,62 +1,60 @@
-package mg.ny.adminui.view_logics.flight_view.fragment;
+package mg.ny.adminui.view_logics.reservation_view.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.button.MaterialButton;
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import java.util.ArrayList;
 
 import mg.ny.adminui.R;
-import mg.ny.adminui.view_logics.RequestCode;
 import mg.ny.adminui.data_model.FlightDataModel;
-import mg.ny.adminui.view_logics.flight_view.activity.AddFlightActivity;
+import mg.ny.adminui.view_logics.RequestCode;
+import mg.ny.adminui.data_model.PlaneDataModel;
+import mg.ny.adminui.data_model.ReservationDataModel;
 import mg.ny.adminui.view_logics.flight_view.activity.EditFlightActivity;
+import mg.ny.adminui.view_logics.plane_view.activity.AddplaneActivity;
+import mg.ny.adminui.view_logics.public_component_view.horizentalList.ItemViewHolder;
 import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListAdapter;
 import mg.ny.adminui.view_logics.public_component_view.horizentalList.StaticHorizentalListModel;
 import mg.ny.adminui.view_logics.public_component_view.interfaces.HorizentalListCallBack;
 import mg.ny.adminui.view_logics.public_component_view.interfaces.RemoveItemCallBack;
+import mg.ny.adminui.view_logics.reservation_view.activity.AddReservationActivity;
+import mg.ny.adminui.view_logics.reservation_view.activity.EditReservationActivity;
+import mg.ny.adminui.view_logics.reservation_view.adapter.reservationListAdapter.ReservationAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FlightFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class  FlightFragment extends Fragment {
-
+public class  ReservationFragment extends Fragment {
     private ArrayList<StaticHorizentalListModel> item ;
-    private ArrayList<FlightDataModel> data;
+    private ArrayList<ReservationDataModel> data;
     private Integer currentPosition = null;
-    private TextView currentId;
-    private TextView currentPlaneName;
-    private TextView currentCost;
-    private TextView currentDepartureDate;
-    private TextView currentDepartureCity;
-    private TextView currentArrivalDate;
-    private TextView currentArrivalCity;
-
-    private TextView flighNumber;
-    private Dialog dialog;
+    private TextView numberOfItem;
     private RemoveItemCallBack removeItemCallBack;
+    private SwipeMenuListView listView;
+    private ReservationAdapter adapter;
+    private Dialog dialog;
     private LinearLayout contentDialog;
     private RelativeLayout loadingDialog;
-    public FlightFragment(ArrayList<StaticHorizentalListModel> item, ArrayList<FlightDataModel> data, RemoveItemCallBack removeItemCallBack){
+    public ReservationFragment(ArrayList<StaticHorizentalListModel> item, ArrayList<ReservationDataModel> data, RemoveItemCallBack removeItemCallBack){
         this.item = item;
         this.data = data;
         this.removeItemCallBack = removeItemCallBack;
@@ -84,7 +82,7 @@ public class  FlightFragment extends Fragment {
     private StaticHorizentalListAdapter horizentalListAdapter;
     private LayoutInflater inflater;
     private ViewGroup container;
-    private FlightDataModel currentFlightData;
+    private PlaneDataModel currentPlaneData;
     private View planeDetail;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,8 +105,8 @@ public class  FlightFragment extends Fragment {
         planePage.findViewById(R.id.addPlaneButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addActivity = new Intent(context, AddFlightActivity.class);
-                startActivityForResult(addActivity, RequestCode.REQUEST_CODE_ADD_FLIGHT);
+                Intent addActivity = new Intent(context, AddReservationActivity.class);
+                startActivityForResult(addActivity, RequestCode.REQUEST_CODE_ADD_PLANE);
             }
         });
         planeFragement.addView(planePage);
@@ -118,15 +116,7 @@ public class  FlightFragment extends Fragment {
         planeContent = view.findViewById(R.id.planeContent);
         selectionIcon = inflater.inflate(R.layout.selection_icon, container, false);
         planeContent.addView(selectionIcon);
-        planed = inflater.inflate(R.layout.flight_content, container, false);
-        planed.findViewById(R.id.editCurrentPlane).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editActivity = new Intent(context, EditFlightActivity.class);
-                editActivity.putExtra("data", currentFlightData);
-                startActivityForResult(editActivity, RequestCode.REQUEST_CODE_EDIT_FLIGHT);
-            }
-        });
+        planed = inflater.inflate(R.layout.reservation_content, container, false);
         recyclerView = view.findViewById(R.id.rv_plane);
         HorizentalListCallBack<RecyclerView.ViewHolder, Integer, Boolean, Integer> callbackHorizentalList = (RecyclerView.ViewHolder holder, Integer position, Boolean isFirstClicked) -> {
             if(isFirstClicked) {
@@ -134,29 +124,72 @@ public class  FlightFragment extends Fragment {
                 planeContent.addView(planed);
             }
             this.currentPosition = position;
-            currentFlightData = data.get(position);
-            currentPlaneName = view.findViewById(R.id.flightPlaneName);
-            currentDepartureCity = view.findViewById(R.id.departureCity);
-            currentDepartureDate = view.findViewById(R.id.departureDate);
-            currentArrivalCity = view.findViewById(R.id.arrivalCity);
-            currentArrivalDate = view.findViewById(R.id.arrivalDate);
-            currentCost = view.findViewById(R.id.cost);
+            if(holder instanceof ItemViewHolder){
+                ItemViewHolder viewHolder = (ItemViewHolder) holder;
+               String currentFlightId = item.get(position).getTxt();
+               ArrayList<ReservationDataModel> currentReservData = getFilteredDataByFlightId(currentFlightId);
+               listView = planed.findViewById(R.id.reservationListItem);
+               adapter = new ReservationAdapter(context, currentReservData);
+               listView.setAdapter(adapter);
+               adapter.notifyDataSetChanged();
+                SwipeMenuCreator creator = new SwipeMenuCreator() {
 
-            currentCost.setText(currentFlightData.getCost());
-            currentDepartureDate.setText(currentFlightData.getDepartureDate());
-            currentDepartureCity.setText(currentFlightData.getDepartureCity());
-            currentArrivalDate.setText(currentFlightData.getArrivalDate());
-            currentArrivalCity.setText(currentFlightData.getArrivalCity());
-            currentPlaneName.setText(currentFlightData.getPlane());
+                    @Override
+                    public void create(SwipeMenu menu) {
 
+                        SwipeMenuItem editItem = new SwipeMenuItem(context);
+
+                        editItem.setBackground(new ColorDrawable(getResources().getColor(R.color.backgroundColor)));
+                        editItem.setWidth(130);
+                        editItem.setIcon(R.drawable.ic_edit);
+                        menu.addMenuItem(editItem);
+
+                        SwipeMenuItem deleteItem = new SwipeMenuItem(context);
+                        deleteItem.setBackground(new ColorDrawable(getResources().getColor(R.color.backgroundColor)));
+                        deleteItem.setWidth(100);
+                        deleteItem.setIcon(R.drawable.ic_delete_swipe);
+
+                        menu.addMenuItem(deleteItem);
+                    }
+                };
+
+                listView.setMenuCreator(creator);
+
+
+                listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+
+                        switch (index) {
+                            case 0:
+                                Intent editActivity = new Intent(context, EditReservationActivity.class);
+                                ReservationDataModel cRData = currentReservData.get(position);
+                                editActivity.putExtra("data", cRData);
+                                startActivityForResult(editActivity, RequestCode.REQUEST_CODE_EDIT_RESERV);
+                                break;
+                            case 1:
+
+                              /*
+                              imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                              TextView textDialog = dialog.findViewById(R.id.planeRemoveId);
+                                textDialog.setText("Vol numéro : " +  data.get(position).getId());
+                                dialog.show(); */
+                                break;
+                        }
+                        // false : close the menu; true : not close the menu
+                        return false;
+                    }
+                });
+
+            }
             return 0;
         };
         recyclerView.setLayoutManager(new LinearLayoutManager( view.getContext(), LinearLayoutManager.HORIZONTAL, false));
         horizentalListAdapter = new StaticHorizentalListAdapter(recyclerView, activity, item, callbackHorizentalList );
         recyclerView.setAdapter(horizentalListAdapter);
-        flighNumber = view.findViewById(R.id.planeNumber);
-        flighNumber.setText(String.valueOf(data.size()));
-        dialog = new Dialog(activity);
+        numberOfItem = view.findViewById(R.id.planeNumber);
+        numberOfItem.setText(String.valueOf(item.size()));
+        /*dialog = new Dialog(activity);
         dialog.setContentView(R.layout.remove_dialog);
         dialog.getWindow().setBackgroundDrawableResource(R.drawable.dialog_background);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -174,7 +207,7 @@ public class  FlightFragment extends Fragment {
                     @Override
                     public void run() {
                         removeItemCallBack.removeItem(currentPosition);
-                        flighNumber.setText(String.valueOf(data.size()));
+                        planeNumber.setText(String.valueOf(item.size()));
                         horizentalListAdapter.setIsFirstClicked(true);
                         horizentalListAdapter.setRow_index(-1);
                         horizentalListAdapter.notifyDataSetChanged();
@@ -197,14 +230,14 @@ public class  FlightFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 TextView textDialog = dialog.findViewById(R.id.planeRemoveId);
-                textDialog.setText("Vol numéro : " + currentFlightData.getId());
+                textDialog.setText("Avion numéro : " + currentId.getText());
                 dialog.show();
             }
-        });
+        }); */
     }
 
 
-    private int getFlightDataPosition(String id){
+    private int getPlaneDataPosition(String id){
         for(int i=0; i<data.size();i++){
             if(data.get(i).getId().equals(id)) return i;
         }
@@ -216,34 +249,30 @@ public class  FlightFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, d);
         if(resultCode == Activity.RESULT_CANCELED) return;
         switch (resultCode){
-            case RequestCode.REQUEST_CODE_ADD_FLIGHT:
-                FlightDataModel fl = (FlightDataModel) d.getParcelableExtra("data");
+            case RequestCode.REQUEST_CODE_ADD_PLANE:
+                PlaneDataModel pl = (PlaneDataModel) d.getParcelableExtra("data");
                 if(currentPosition != null && currentPosition == 0) horizentalListAdapter.setRow_index(1);
                 horizentalListAdapter.notifyDataSetChanged();
-                flighNumber.setText(String.valueOf(data.size()));
-                Toast.makeText(context, "Vol ajouter avec succés", 1000).show();
+                numberOfItem.setText(String.valueOf(item.size()));
+                Toast.makeText(context, "Avion ajouter avec succés", 1000).show();
                 break;
-            case RequestCode.REQUEST_CODE_EDIT_FLIGHT:
-                FlightDataModel currentD = (FlightDataModel) d.getParcelableExtra("data");
+            case RequestCode.REQUEST_CODE_EDIT_PLANE:
+                PlaneDataModel currentD = (PlaneDataModel) d.getParcelableExtra("data");
                 horizentalListAdapter.notifyDataSetChanged();
-                int p = getFlightDataPosition(currentD.getId());
+                int p = getPlaneDataPosition(currentD.getId());
                 if(currentPosition != null && currentPosition == p){
-                   currentFlightData = currentD;
-                   currentPlaneName.setText(currentFlightData.getPlane());
-                   currentDepartureDate.setText(currentFlightData.getDepartureDate());
-                   currentArrivalDate.setText(currentFlightData.getArrivalDate());
-                   currentDepartureCity.setText(currentFlightData.getDepartureCity());
-                   currentArrivalCity.setText(currentFlightData.getArrivalCity());
-                   currentCost.setText(currentFlightData.getCost());
+                    currentPlaneData = currentD;
+
+
                 }
-                flighNumber.setText(String.valueOf(data.size()));
+                numberOfItem.setText(String.valueOf(item.size()));
                 Toast.makeText(context, "Données modifier avec succés", 1000).show();
                 break;
-            case RequestCode.REQUEST_CODE_REMOVE_FLIGHT:
-                FlightDataModel rmData = (FlightDataModel) d.getParcelableExtra("data");
-                int pos = getFlightDataPosition(rmData.getId());
+            case RequestCode.REQUEST_CODE_REMOVE_PLANE:
+                PlaneDataModel rmData = (PlaneDataModel) d.getParcelableExtra("data");
+                int pos = getPlaneDataPosition(rmData.getId());
                 removeItemCallBack.removeItem(pos);
-                flighNumber.setText(String.valueOf(data.size()));
+                numberOfItem.setText(String.valueOf(item.size()));
                 if(currentPosition == null){
                     horizentalListAdapter.notifyDataSetChanged();
                     Toast.makeText(context, "Données supprimer avec succés", 1000).show();
@@ -267,5 +296,16 @@ public class  FlightFragment extends Fragment {
 
     }
 
+    public void setItem(ArrayList<StaticHorizentalListModel> item) {
+        this.item = item;
+    }
 
+    private ArrayList<ReservationDataModel> getFilteredDataByFlightId(String flightId){
+        flightId = flightId.toLowerCase();
+        ArrayList<ReservationDataModel> filtered = new ArrayList<>();
+        for(ReservationDataModel object : data){
+            if(object.getFlightId().toLowerCase().contains(flightId)) filtered.add(object);
+        }
+        return filtered;
+    }
 }

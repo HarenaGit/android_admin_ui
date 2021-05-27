@@ -7,12 +7,22 @@ import mg.ny.adminui.data_model.PlaneDataModel;
 
 public class StaticHorizentalListModel implements Parcelable {
     private String text;
+    private String detail;
+    private String txt;
     public StaticHorizentalListModel(String text){
         this.text = text;
+    }
+    public StaticHorizentalListModel(String text, String detail){
+        this.text = text + " / " + detail;
+        this.detail = detail;
+        this.txt = text;
     }
     public String getText(){
         return text;
     }
+    public String getTxt(){return txt;}
+    public String getDetail(){return  detail;}
+
 
     @Override
     public int describeContents() {
